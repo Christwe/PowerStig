@@ -11,6 +11,12 @@ $stigList = Get-StigVersionTable -CompositeResourceName $script:DSCCompositeReso
 $password = ConvertTo-SecureString -AsPlainText -Force -String 'ThisIsAPlaintextPassword'
 $SetupAccount = New-Object -TypeName pscredential -ArgumentList 'Admin', $password
 
+$SPLogLevelItems = @(
+    @{"Area" = "SharePoint Server";"Name" = "Database";"TraceLevel" = "Verbose";"EventLevel" = "Error"},
+    @{"Area" = "Business Connectivity Services";"Name" = "Business Data";"TraceLevel" = "Verbose";"EventLevel" = "Informational"},
+    @{"Area" = "Search";"Name" = "Content Processing";"TraceLevel" = "Verbose";"EventLevel" = "Error"}
+)
+
 $additionalTestParameterList    = @{
     SetupAccount = $SetupAccount
     ConfigurationData           = @{

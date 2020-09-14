@@ -9,6 +9,18 @@ using module ..\..\PowerStig.psm1
         A composite DSC resource to manage the SharePoint STIG settings.
     .PARAMETER SharePointVersion
         The version of SharePoint being used E.g. '2013'
+    .PARAMETER SPLogLevelItems
+        A hashtable of SPLogLevels within an array to configure the Area and Category within ULS logs
+
+        $SPLogLevelItems = @(@{"Area" = "SharePoint Server";"Name" = "Database";"TraceLevel" = "Verbose";"EventLevel" = "Error"},
+            @{"Area" = "Business Connectivity Services";"Name" = "Business Data";"TraceLevel" = "Verbose";"EventLevel" = "Informational"},
+            @{"Area" = "Search";"Name" = "Content Processing";"TraceLevel" = "Verbose";"EventLevel" = "Error"}
+        )
+    .PARAMETER SPAlternateUrlItem
+        A hashtable to configure Alternate Url on Web Applications
+
+        $SPALternateUrlItem = @{Url = "https://Other.contoso.com"; WebAppName = "Other web App"; Zone = "Internet"; Internal = $false}
+
     .PARAMETER StigVersion
         The version of the SharePoint STIG to apply and/or monitor
     .PARAMETER Exception
@@ -51,6 +63,16 @@ configuration SharePoint
 
         [Parameter()]
         [ValidateNotNullOrEmpty()]
+        [array]
+        $SPLogLevelItems,
+
+        [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [hashtable]
+        $SPAlternateUrlItem,
+
+        [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [version]
         $StigVersion,
 
@@ -82,6 +104,10 @@ configuration SharePoint
 
     Import-DscResource -ModuleName SharePointDSC -ModuleVersion 4.2.0
     . "$resourcePath\SharePoint.SPWebAppGeneralSettings.ps1"
+    . "$resourcePath\SharePoint.SPLogLevel.ps1"
+
+    Import-DscResource -ModuleName xWebAdministration -ModuleVersion 2.5.0.0
+    . "$resourcePath\SharePoint.xSslSettings.ps1"
 
     Import-DscResource -ModuleName PSDscResources -ModuleVersion 2.10.0.0
     . "$resourcePath\windows.Script.skip.ps1"
